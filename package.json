@@ -1,0 +1,11 @@
+{
+  "name": "slider",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/slider.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "author": "Nichoals Sorokin",
+  "license": "UNLICENSED"
+}
