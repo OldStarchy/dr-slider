@@ -7,5 +7,13 @@
     "test": "gulp test"
   },
   "author": "Nichoals Sorokin",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "typedoc": "^0.11.1",
+    "typescript": "^3.0.1"
+  },
+  "dependencies": {
+    "@types/jquery": "^3.3.5"
+  }
 }
