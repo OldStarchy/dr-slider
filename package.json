@@ -1,6 +1,6 @@
 {
   "name": "slider",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/slider.js",
   "scripts": {
@@ -8,10 +8,23 @@
   },
   "author": "Nichoals Sorokin",
   "license": "UNLICENSED",
+  "keywords": [
+    "jquery-plugin",
+    "carousel",
+    "slider"
+  ],
   "devDependencies": {
+    "browserify": "^16.2.2",
+    "common-shakeify": "^0.5.0",
+    "del": "^3.0.0",
     "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp-sass": "^4.0.1",
+    "gulp-typedoc": "^2.2.0",
+    "tsify": "^4.0.0",
     "typedoc": "^0.11.1",
-    "typescript": "^3.0.1"
+    "typescript": "^3.0.1",
+    "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
     "@types/jquery": "^3.3.5"
