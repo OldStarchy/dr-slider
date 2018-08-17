@@ -1,0 +1,11 @@
+@import 'variables';
+
+.#{$classPrefix} {
+	&slider {
+		color: red;
+	}
+
+	&slide {
+		display: inline-block;
+	}
+}
