@@ -91,3 +91,6 @@ gulp.task('build:scss', () => {
 gulp.task('watch:scss', (done) => {
 	return gulp.watch([`${srcDir}/scss/**/*.scss`], ['build:scss']);
 });
+gulp.task('watch:ts', (done) => {
+	return gulp.watch([`${srcDir}/ts/**/*.ts`], ['build:ts']);
+});
