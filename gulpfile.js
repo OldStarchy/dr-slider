@@ -24,6 +24,12 @@ const inFile = `${srcDir}/ts/main.ts`;
 const dist = './dist';
 const outFile = `${dist}/slider.js`;
 
+function logError(error)  {
+	console.log(error.toString());
+
+	this.emit('end');
+}
+
 function createBrowserifier(entry) {
 	return (
 		browserify({
@@ -45,6 +51,7 @@ gulp.task('clean', () => {
 gulp.task('build:ts', () => {
 	return createBrowserifier(inFile)
 		.bundle()
+		.on('error', logError)
 		.pipe(source(`slider.js`))
 		.pipe(gulp.dest(`${dist}/js`));
 });
