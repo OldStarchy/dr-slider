@@ -9,7 +9,7 @@ interface JQueryStaticSliderPlugin {
 
 	/**
 	 * Set default settings used by new slider instances
-	 * @param defaults 
+	 * @param defaults
 	 */
 	slider(defaults: SliderOptions): void;
 }
@@ -30,7 +30,7 @@ const jqueryPlugin: JQuerySliderPlugin = {
 		if (optionsOrData == 'data') return this.data('slider');
 
 		this.each(function() {
-			new Slider(this, optionsOrData);
+			$(this).data('slider', new Slider(this, optionsOrData));
 		});
 
 		return this;
