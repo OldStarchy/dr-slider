@@ -1,6 +1,10 @@
+import {Slider} from './Slider';
+
 export interface SliderOptionSet {
 	slideSelector: string;
 	classPrefix: string;
+	direction: 'horizontal' | 'vertical';
+	transition: (this: Slider, from: number, to: number, step: number) => void;
 }
 
 export type SliderOptions = Partial<SliderOptionSet>;
