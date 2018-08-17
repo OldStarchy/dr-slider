@@ -1,0 +1,19 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+		"indent": true,
+		"quotemark": {
+			"options":"single",
+			"severity": "warning"
+		},
+		"interface-name": false,
+		"no-var-keyword": {
+			"severity": "error"
+		},
+	},
+    "rulesDirectory": []
+}
