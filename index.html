@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +8,23 @@
 	<title>Document</title>
 
 	<style>
-		html, body {
+		html,
+		body {
 			margin: 0;
 			padding: 0;
 			box-sizing: border-box;
 		}
+
 		* {
 			box-sizing: inherit;
 		}
+
 		ul {
 			padding: 0;
 			margin: 0;
 			outline: 1px solid red;
 		}
+
 		li {
 			display: block;
 			width: 100px;
@@ -30,15 +35,10 @@
 	<link rel="stylesheet" href="dist/css/style.css">
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="dist/js/slider.js"></script>
-	<script>
-		/// <reference path="./src/ts/main.ts" />
-		jQuery($ => {
-			$('.slider').slider({
-			}).slider('data').test();
-		});
-	</script>
+	<script src="lib/slider.js"></script>
+	<script src="lib/script.js"></script>
 </head>
+
 <body>
 	<ul class="slider">
 		<li>Slide 1</li>
@@ -48,4 +48,5 @@
 		<li>Slide 5</li>
 	</ul>
 </body>
+
 </html>

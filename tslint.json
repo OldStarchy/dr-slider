@@ -1,19 +1,21 @@
 {
-    "defaultSeverity": "error",
-    "extends": [
-        "tslint:recommended"
-    ],
-    "jsRules": {},
-    "rules": {
-		"indent": true,
+	"defaultSeverity": "error",
+	"extends": ["tslint:recommended", "tslint-config-prettier"],
+	"jsRules": {},
+	"rules": {
+		"indent": {
+			"options": "tabs",
+			"severity": "error"
+		},
 		"quotemark": {
-			"options":"single",
+			"options": "single",
 			"severity": "warning"
 		},
 		"interface-name": false,
 		"no-var-keyword": {
 			"severity": "error"
 		},
+		"no-console": false
 	},
-    "rulesDirectory": []
+	"rulesDirectory": []
 }

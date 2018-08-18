@@ -1,32 +1,53 @@
 {
-  "name": "slider",
-  "version": "0.1.0",
-  "description": "",
-  "main": "dist/slider.js",
-  "scripts": {
-    "test": "gulp test"
-  },
-  "author": "Nichoals Sorokin",
-  "license": "UNLICENSED",
-  "keywords": [
-    "jquery-plugin",
-    "carousel",
-    "slider"
-  ],
-  "devDependencies": {
-    "browserify": "^16.2.2",
-    "common-shakeify": "^0.5.0",
-    "del": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^5.0.0",
-    "gulp-sass": "^4.0.1",
-    "gulp-typedoc": "^2.2.0",
-    "tsify": "^4.0.0",
-    "typedoc": "^0.11.1",
-    "typescript": "^3.0.1",
-    "vinyl-source-stream": "^2.0.0"
-  },
-  "dependencies": {
-    "@types/jquery": "^3.3.5"
-  }
+	"name": "slider",
+	"version": "0.1.0",
+	"description": "A slider plugin for jQuery",
+	"main": "lib/index.js",
+	"types": "lib/index.d.ts",
+	"scripts": {
+		"test": "jest --config jestconfig.json",
+		"clean": "gulp clean",
+		"build": "gulp build",
+		"format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+		"lint": "tslint -p tsconfig.json",
+		"prepare": "npm run build",
+		"prepublishOnly": "npm test && npm run lint",
+		"preversion": "npm run lint",
+		"version": "npm run format && git add -A src",
+		"postversion": "git push && git push --tags"
+	},
+	"author": "Nichoals Sorokin",
+	"license": "UNLICENSED",
+	"keywords": [
+		"jquery-plugin",
+		"carousel",
+		"slider"
+	],
+	"devDependencies": {
+		"@types/jest": "^23.3.1",
+		"browserify": "^16.2.2",
+		"common-shakeify": "^0.5.0",
+		"del": "^3.0.0",
+		"exorcist": "^1.0.1",
+		"gulp": "^3.9.1",
+		"gulp-autoprefixer": "^5.0.0",
+		"gulp-concat": "^2.6.1",
+		"gulp-debug": "^4.0.0",
+		"gulp-sass": "^4.0.1",
+		"gulp-typedoc": "^2.2.0",
+		"gulp-typescript": "^5.0.0-alpha.3",
+		"jest": "^23.5.0",
+		"prettier": "^1.14.2",
+		"ts-jest": "^23.1.3",
+		"tsify": "^4.0.0",
+		"tslint": "^5.11.0",
+		"tslint-config-prettier": "^1.14.0",
+		"typedoc": "^0.11.1",
+		"typescript": "^3.0.1",
+		"vinyl-map": "^1.0.2",
+		"vinyl-source-stream": "^2.0.0"
+	},
+	"dependencies": {
+		"@types/jquery": "^3.3.5"
+	}
 }
