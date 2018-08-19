@@ -9,15 +9,15 @@ body {
 	box-sizing: inherit;
 }
 
-ul {
+.slider {
 	padding: 0;
 	margin: 0;
 	outline: 1px solid red;
 }
 
-li {
-	display: block;
+.slider .slider-slide {
 	width: 100px;
 	height: 100px;
 	outline: 1px solid black;
+	margin: 0 10px;
 }

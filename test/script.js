@@ -5,4 +5,6 @@ $(function() {
 	var slider = $('.slider').slider('data');
 
 	slider.test();
+
+	window.s = slider;
 });
