@@ -1,4 +1,6 @@
 src
+test
+.vscode
 tsconfig.json
 tslint.json
 .prettierrc
