@@ -1,6 +1,5 @@
 //@ts-check
 'use strict';
-debugger;
 //Common
 const gulp = require('gulp');
 const del = require('del');
@@ -14,6 +13,7 @@ const source = require('vinyl-source-stream');
 const commonShake = require('common-shakeify');
 const typedoc = require('gulp-typedoc');
 const typescript = require('gulp-typescript');
+const exorsist = require('exorcist');
 
 //SASS
 const sass = require('gulp-sass');
@@ -36,6 +36,9 @@ gulp.task('clean', () => {
 	return del('./lib/**/*');
 });
 
+// parts taken from https://github.com/awayjs/core/blob/5102af04f2f1660593ec9d59592f9416b8c92a5d/gulpfile.js#L26
+
+//Uses typescript to compile the source, and create the d.ts files. The d.ts files are concatenated and tweaked slightly using ambientWrap. The compiled js files though are just thrown away because I couldn't figure out how to pipe them into browserify.
 gulp.task('build:dts', () => {
 	var tsProject = typescript.createProject({
 		declarationFiles: true,
@@ -47,26 +50,19 @@ gulp.task('build:dts', () => {
 	var ambientWrap = map(function(code, filename) {
 		code = code.toString();
 		code =
-			// 'declare module "' +
-			// path.relative('./src/ts', filename.slice(0, -5)) +
-			// '" {\n\t' +
 			code
 				.replace(/export (declare )?/g, '')
 				.replace(/declare global {([^{]*(?:\{[^}]*?\}[^{]*)*)}/g, (full, first) =>
 					first.replace(/\n(?:\t|    )/g, '\n'),
 				)
-				// .split('declare ')
-				// .join('')
 				.split('\n')
 				.filter(line => !/^(\/\/#|import).*/.test(line))
 				.join('\n') + '\n'; // +
-		// '}';
 		return code;
 	});
 
 	var tsResult = gulp
 		.src(['./src/ts/**/*.ts', '!**/__tests__/**'])
-		// .pipe(sourcemaps.init())
 		.pipe(tsProject())
 		.on('error', logError);
 
@@ -74,23 +70,17 @@ gulp.task('build:dts', () => {
 		.pipe(ambientWrap)
 		.pipe(concat('slider.d.ts'))
 		.pipe(gulp.dest(dist));
-
-	//  (
-	// 	tsResult.js
-	// 		// .pipe(sourcemaps.write({ sourceRoot: '../' }))
-	// 		.pipe(gulp.dest('./temp'))
-	// );
 });
 
-gulp.task('build:ts', ['build:dts'], function(callback) {
-	var b = browserify({
-		entries: ['src/ts/main.ts'],
-	})
+//Uses browserify to create the js and js.map files. Ideally this would be a part of the above task.
+gulp.task('build:ts', function(callback) {
+	var b = browserify({ debug: true, entries: ['src/ts/main.ts'] })
 		.plugin(tsify)
 		.plugin(commonShake)
 
 		.bundle()
 		.on('error', logError)
+		.pipe(exorsist('lib/slider.js.map'))
 		.pipe(source('slider.js'))
 		.pipe(gulp.dest(dist))
 		.on('end', callback);
@@ -118,7 +108,7 @@ gulp.task('build:scss', () => {
 		.pipe(gulp.dest(dist));
 });
 
-gulp.task('build', ['build:ts', 'build:scss'], done => {});
+gulp.task('build', ['build:ts', 'build:dts', 'build:scss'], done => {});
 
 gulp.task('watch:scss', ['build:scss'], done => {
 	return gulp.watch([`${srcDir}/scss/**/*.scss`], ['build:scss']);
@@ -131,7 +121,7 @@ gulp.task('watch:ts', ['build:ts'], done => {
 gulp.task('watch', ['build:ts', 'build:scss'], done => {
 	return Promise.all([
 		gulp.watch([`${srcDir}/scss/**/*.scss`], ['build:scss']),
-		gulp.watch([`${srcDir}/ts/**/*.ts`], ['build:ts']),
+		gulp.watch([`${srcDir}/ts/**/*.ts`], ['build:ts', 'build:dts']),
 	]);
 });
 
