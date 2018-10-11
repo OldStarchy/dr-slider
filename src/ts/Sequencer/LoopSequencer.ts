@@ -1,6 +1,6 @@
 import { Sequencer } from '../Sequencer';
 
-export class LoopSenquencer extends Sequencer {
+export class LoopSequencer extends Sequencer {
 	public getNext(current: number, length: number) {
 		return (current + 1) % length;
 	}
@@ -16,8 +16,8 @@ export class LoopSenquencer extends Sequencer {
 
 declare global {
 	interface Window {
-		LoopSenquencer: typeof LoopSenquencer;
+		LoopSequencer: typeof LoopSequencer;
 	}
 }
 
-window.LoopSenquencer = LoopSenquencer;
+window.LoopSequencer = LoopSequencer;

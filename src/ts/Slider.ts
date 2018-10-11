@@ -1,11 +1,11 @@
-import { LoopSenquencer } from './Sequencer/LoopSequencer';
+import { LoopSequencer } from './Sequencer/LoopSequencer';
 import { SliderOptions, SliderOptionSet } from './SliderOptionSet';
 
 export class Slider {
 	public static defaultOptions: SliderOptionSet = {
 		classPrefix: 'slider-',
 		direction: 'horizontal',
-		sequencer: new LoopSenquencer(),
+		sequencer: new LoopSequencer(),
 		slideSelector: '> *',
 		transition(this: Slider, from: number, to: number, step: number) {
 			this.$children.first().css('margin-left', step);
