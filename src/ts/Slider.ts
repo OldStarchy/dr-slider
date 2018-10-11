@@ -1,9 +1,11 @@
+import { LoopSenquencer } from './Sequencer/LoopSequencer';
 import { SliderOptions, SliderOptionSet } from './SliderOptionSet';
 
 export class Slider {
 	public static defaultOptions: SliderOptionSet = {
 		classPrefix: 'slider-',
 		direction: 'horizontal',
+		sequencer: new LoopSenquencer(),
 		slideSelector: '> *',
 		transition(this: Slider, from: number, to: number, step: number) {
 			this.$children.first().css('margin-left', step);
@@ -20,6 +22,7 @@ export class Slider {
 	private readonly options: SliderOptionSet;
 
 	private currentLeft: number = 0;
+	private currentIndex: number = 0;
 
 	public constructor(element: HTMLElement, options?: SliderOptions) {
 		// TODO: Do we need this instance ID?
@@ -45,6 +48,7 @@ export class Slider {
 	}
 
 	public gotoSlide(index: number) {
+		this.currentIndex = index;
 		const left = this.getSlideLeft(index);
 		if (left === undefined) {
 			return;
@@ -60,6 +64,18 @@ export class Slider {
 				},
 			},
 		);
+	}
+
+	public gotoNext() {
+		this.gotoSlide(this.options.sequencer.getNext(this.currentIndex, this.$children.length));
+	}
+
+	public gotoPrev() {
+		this.gotoSlide(this.options.sequencer.getPrev(this.currentIndex, this.$children.length));
+	}
+
+	public gotoOffset(offset: number) {
+		this.gotoSlide(this.options.sequencer.getOffset(this.currentIndex, offset, this.$children.length));
 	}
 
 	public test() {

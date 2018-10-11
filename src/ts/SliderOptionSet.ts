@@ -1,3 +1,4 @@
+import { Sequencer } from './Sequencer';
 import { Slider } from './Slider';
 
 export interface SliderOptionSet {
@@ -5,9 +6,13 @@ export interface SliderOptionSet {
 	classPrefix: string;
 	direction: 'horizontal' | 'vertical';
 	transition: (this: Slider, from: number, to: number, step: number) => void;
+	sequencer: Sequencer;
 }
 
 export type SliderOptions = Partial<SliderOptionSet>;
+
+// Options copied from slick
+
 // accessibility: boolean;
 // adaptiveHeight: boolean;
 // appendArrows: JQuery;
