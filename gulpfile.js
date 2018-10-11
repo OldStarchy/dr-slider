@@ -76,7 +76,7 @@ gulp.task('build:dts', () => {
 gulp.task('build:ts', function(callback) {
 	var b = browserify({ debug: true, entries: ['src/ts/main.ts'] })
 		.plugin(tsify)
-		.plugin(commonShake)
+		// .plugin(commonShake)
 
 		.bundle()
 		.on('error', logError)
