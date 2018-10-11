@@ -1,5 +1,5 @@
 {
-	"name": "slider",
+	"name": "dr-slider",
 	"version": "0.1.0",
 	"description": "A slider plugin for jQuery",
 	"main": "lib/index.js",
@@ -49,5 +49,9 @@
 	},
 	"dependencies": {
 		"@types/jquery": "^3.3.5"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:aNickzz/dr-slider.git"
 	}
 }
