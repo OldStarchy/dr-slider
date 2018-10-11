@@ -20,9 +20,6 @@ declare global {
 	interface JQuery extends JQuerySliderPlugin {}
 	interface JQueryStatic extends JQueryStaticSliderPlugin {}
 	/* tslint:enable:no-empty-interface */
-	interface Window {
-		Slider: typeof Slider;
-	}
 }
 
 const jqueryPlugin: JQuerySliderPlugin = {
@@ -47,5 +44,3 @@ const jqueryStaticPlugin: JQueryStaticSliderPlugin = {
 
 $.fn.extend(jqueryPlugin);
 $.extend($, jqueryStaticPlugin);
-
-window.Slider = Slider;
