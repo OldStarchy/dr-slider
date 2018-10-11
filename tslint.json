@@ -15,7 +15,8 @@
 		"no-var-keyword": {
 			"severity": "error"
 		},
-		"no-console": false
+		"no-console": false,
+		"no-namespace": false
 	},
 	"rulesDirectory": []
 }
