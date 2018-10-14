@@ -1,25 +1,38 @@
+import { LoopSequencer } from './Sequencer/LoopSequencer';
+import { PingPongSequencer } from './Sequencer/PingPongSequencer';
 import { Slider } from './Slider';
-import { SliderOptions } from './SliderOptionSet';
-
-export interface JQuerySliderPlugin {
-	slider(this: JQuery<HTMLElement>, data: 'data'): Slider;
-	slider(this: JQuery<HTMLElement>, options?: SliderOptions): JQuery<HTMLElement>;
-	slider(this: JQuery<HTMLElement>, optionsOrData?: SliderOptions | 'data'): JQuery<HTMLElement> | Slider;
-}
-
-export interface JQueryStaticSliderPlugin {
-	/**
-	 * Set default settings used by new slider instances
-	 * @param defaults
-	 */
-	slider(defaults: SliderOptions): void;
-}
+import { SliderPlugin } from './SliderPlugin';
 
 declare global {
+	interface JQuerySliderPlugin {
+		slider(this: JQuery<HTMLElement>, data: 'data'): Slider;
+		slider(this: JQuery<HTMLElement>, options?: SliderOptions): JQuery<HTMLElement>;
+		slider(this: JQuery<HTMLElement>, optionsOrData?: SliderOptions | 'data'): JQuery<HTMLElement> | Slider;
+	}
+
+	interface JQueryStaticSliderPlugin {
+		/**
+		 * Set default settings used by new slider instances
+		 * @param defaults
+		 */
+		slider(defaults: SliderOptions): void;
+	}
+
 	/* tslint:disable:no-empty-interface */
 	interface JQuery extends JQuerySliderPlugin {}
 	interface JQueryStatic extends JQueryStaticSliderPlugin {}
 	/* tslint:enable:no-empty-interface */
+
+	interface DrSliderExports {
+		LoopSequencer: typeof LoopSequencer;
+		PingPongSequencer: typeof PingPongSequencer;
+		Slider: typeof Slider;
+		SliderPlugin: typeof SliderPlugin;
+	}
+
+	interface Window {
+		DrSlider: DrSliderExports;
+	}
 }
 
 const jqueryPlugin: JQuerySliderPlugin = {
@@ -44,3 +57,10 @@ const jqueryStaticPlugin: JQueryStaticSliderPlugin = {
 
 $.fn.extend(jqueryPlugin);
 $.extend($, jqueryStaticPlugin);
+
+window.DrSlider = {
+	LoopSequencer,
+	PingPongSequencer,
+	Slider,
+	SliderPlugin,
+};

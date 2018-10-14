@@ -13,11 +13,3 @@ export class LoopSequencer extends Sequencer {
 		return (((current + offset) % length) + length) % length;
 	}
 }
-
-declare global {
-	interface Window {
-		LoopSequencer: typeof LoopSequencer;
-	}
-}
-
-window.LoopSequencer = LoopSequencer;

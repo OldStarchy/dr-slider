@@ -1,16 +1,20 @@
+import { Autoplay } from './Plugins/Autoplay';
 import { LoopSequencer } from './Sequencer/LoopSequencer';
-import { SliderOptions, SliderOptionSet } from './SliderOptionSet';
+import { SliderPlugin } from './SliderPlugin';
 
 export class Slider {
 	public static defaultOptions: SliderOptionSet = {
 		classPrefix: 'slider-',
 		direction: 'horizontal',
+		plugins: [],
 		sequencer: new LoopSequencer(),
 		slideSelector: '> *',
 		transition(this: Slider, from: number, to: number, step: number) {
 			this.$children.first().css('margin-left', step);
 		},
 	};
+
+	public static defaultPlugins: Array<new (slider: Slider, options: SliderOptionSet) => SliderPlugin> = [Autoplay];
 
 	private static instanceUID = 0;
 
@@ -24,6 +28,8 @@ export class Slider {
 	private currentLeft: number = 0;
 	private currentIndex: number = 0;
 
+	private plugins: SliderPlugin[] = [];
+
 	public constructor(element: HTMLElement, options?: SliderOptions) {
 		// TODO: Do we need this instance ID?
 		this.instanceUID = Slider.instanceUID++;
@@ -33,9 +39,30 @@ export class Slider {
 		this.$element = $(element);
 		this.$children = this.$element.find(this.options.slideSelector);
 
+		for (const pluginConstructor of Slider.defaultPlugins) {
+			this.plugins.push(new pluginConstructor(this, this.options));
+		}
+
+		for (const pluginConstructor of this.options.plugins) {
+			this.plugins.push(new pluginConstructor(this, this.options));
+		}
+
 		this.init();
+
+		this.foreachPlugin(plugin => {
+			if (plugin.init) {
+				plugin.init();
+			}
+		});
 	}
 
+	public getElement() {
+		return this.$element;
+	}
+
+	public removePlugin(plugin: SliderPlugin) {
+		// TODO: this
+	}
 	public getSlideLeft(index: number) {
 		if (index < this.$children.length) {
 			const firstChild = $(this.$children.get(0));
@@ -54,6 +81,7 @@ export class Slider {
 			return;
 		}
 
+		$(this).trigger('slider.change.before');
 		$(this).animate(
 			{
 				currentLeft: left,
@@ -78,9 +106,32 @@ export class Slider {
 		this.gotoSlide(this.options.sequencer.getOffset(this.currentIndex, offset, this.$children.length));
 	}
 
+	public getSlideIndex(offset?: number) {
+		if (offset === undefined) {
+			return this.currentIndex;
+		}
+
+		return this.options.sequencer.getOffset(this.currentIndex, offset, this.$children.length);
+	}
+
 	public test() {
 		for (let i = 0; i < this.$children.length; i++) {
 			console.log(this.getSlideLeft(i));
+		}
+	}
+
+	public on(eventType: string, handler: JQuery.EventHandler<Slider>) {
+		$(this).on(eventType, handler);
+	}
+
+	private foreachPlugin(callback: (plugin: SliderPlugin) => void): void {
+		for (const plugin of this.plugins) {
+			try {
+				callback(plugin);
+			} catch (error) {
+				console.error('Error in slider plugin');
+				console.error(error);
+			}
 		}
 	}
 
