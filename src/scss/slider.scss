@@ -2,7 +2,8 @@
 
 .#{$classPrefix} {
 	&slider {
-		color: red;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 
 	&slide {
