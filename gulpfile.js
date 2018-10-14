@@ -51,7 +51,7 @@ gulp.task('build:dts', () => {
 		code = code.toString();
 		code =
 			code
-				.replace(/export (declare )?/g, '')
+				.replace(/export /g, '')
 				.replace(/declare global {([^{]*(?:\{[^}]*?\}[^{]*)*)}/g, (full, first) =>
 					first.replace(/\n(?:\t|    )/g, '\n'),
 				)
