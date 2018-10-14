@@ -1,15 +1,19 @@
 import { Sequencer } from './Sequencer';
 import { Slider } from './Slider';
+import { SliderPlugin } from './SliderPlugin';
 
-export interface SliderOptionSet {
-	slideSelector: string;
-	classPrefix: string;
-	direction: 'horizontal' | 'vertical';
-	transition: (this: Slider, from: number, to: number, step: number) => void;
-	sequencer: Sequencer;
+declare global {
+	interface SliderOptionSet {
+		slideSelector: string;
+		classPrefix: string;
+		direction: 'horizontal' | 'vertical';
+		transition: (this: Slider, from: number, to: number, step: number) => void;
+		sequencer: Sequencer;
+		plugins: Array<new (slider: Slider, options: SliderOptionSet) => SliderPlugin>;
+	}
+
+	type SliderOptions = Partial<SliderOptionSet>;
 }
-
-export type SliderOptions = Partial<SliderOptionSet>;
 
 // Options copied from slick
 
