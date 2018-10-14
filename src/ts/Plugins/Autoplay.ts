@@ -4,37 +4,43 @@ import { SliderPlugin } from '../SliderPlugin';
 export class Autoplay extends SliderPlugin {
 	private static defaultOptions: AutoplayOptions = {
 		autoplay: false,
+		autoplayDwell: 3000,
 		pauseOnHover: true,
-		timeout: 3000,
 	};
 
 	private timeoutId: number | null = null;
+	private waitingForPromise: boolean = false;
 
 	public constructor(slider: Slider, options: SliderOptionSet) {
 		super(slider, $.extend({}, Autoplay.defaultOptions, options));
 	}
 
 	public init(): void {
-		this.slider.getElement().on('mouseover', this.mouseover.bind(this));
-		this.slider.getElement().on('mouseout', this.mouseout.bind(this));
-		this.slider.on('slider.change.before', () => {
-			if (this.options.autoplay) {
-				this.startTimeout();
-			}
-		});
+		this.slider.getElement().on('mouseover', this.stopTimeout.bind(this));
+		this.slider.getElement().on('mouseout', this.maybeStartTimeout.bind(this));
+		this.slider.on('slider.change.after', this.maybeStartTimeout.bind(this));
 
-		if (this.options.autoplay) {
+		this.maybeStartTimeout();
+	}
+
+	public optionsUpdated(options: SliderOptionSet) {
+		const oldOptions = this.options;
+		super.optionsUpdated(options);
+
+		if (!oldOptions.autoplay) {
+			this.maybeStartTimeout();
+		}
+	}
+
+	private maybeStartTimeout() {
+		if (this.options.autoplay && !this.waitingForPromise) {
 			this.startTimeout();
 		}
 	}
 
-	private mouseover() {
-		this.stopTimeout();
-	}
-
-	private mouseout() {
+	private maybeGotoNext() {
 		if (this.options.autoplay) {
-			this.startTimeout();
+			this.slider.gotoNext();
 		}
 	}
 
@@ -48,21 +54,42 @@ export class Autoplay extends SliderPlugin {
 	private startTimeout() {
 		this.stopTimeout();
 
-		let timeoutOrNull: number | null;
+		const option = this.options.autoplayDwell;
 
-		if (typeof this.options.timeout === 'number') {
-			timeoutOrNull = this.options.timeout;
-		} else if (this.options.timeout) {
-			timeoutOrNull = this.options.timeout(this.slider.getSlideIndex(1));
-		} else {
-			timeoutOrNull = null;
+		let dwellOrNull: number | null = null;
+
+		switch (typeof option) {
+			case 'number':
+				dwellOrNull = option;
+				break;
+
+			case 'function':
+				const index = this.slider.getSlideIndex();
+				const result = option(index, this.slider.getSlide(index));
+
+				if (typeof result === 'number') {
+					dwellOrNull = result;
+				} else if (result !== null) {
+					this.waitingForPromise = true;
+					result.then(
+						() => {
+							this.waitingForPromise = false;
+							this.maybeGotoNext();
+						},
+						() => {
+							this.waitingForPromise = false;
+						},
+					);
+					dwellOrNull = null;
+				}
+				break;
 		}
 
-		if (timeoutOrNull) {
+		if (dwellOrNull !== null) {
 			this.timeoutId = window.setTimeout(() => {
 				this.timeoutId = null;
-				this.slider.gotoNext();
-			}, timeoutOrNull);
+				this.maybeGotoNext();
+			}, dwellOrNull);
 		}
 	}
 }
@@ -74,13 +101,13 @@ declare global {
 		 */
 		autoplay: boolean;
 		/**
+		 * Time in milliseconds before advancing
+		 */
+		autoplayDwell: number | ((slideIndex: number, slide: JQuery<HTMLElement>) => number | PromiseLike<any> | null);
+		/**
 		 * Pause the slider while the user is hovering
 		 */
 		pauseOnHover: boolean;
-		/**
-		 * Time in milliseconds before advancing
-		 */
-		timeout: number | ((slideIndex: number) => number | null);
 	}
 
 	// tslint:disable-next-line

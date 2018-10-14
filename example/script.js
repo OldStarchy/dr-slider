@@ -3,7 +3,7 @@
 $(function() {
 	$('.slider').slider({
 		autoplay: true,
-		timeout: 1000,
+		autoplayDwell: 1000,
 	});
 
 	window.s = $('.slider').slider('data');

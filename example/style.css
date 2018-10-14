@@ -22,3 +22,7 @@ body {
 	outline: 1px solid black;
 	margin: 0 10px;
 }
+
+.slider .slider-slide.slider-current {
+	background-color: #efe;
+}

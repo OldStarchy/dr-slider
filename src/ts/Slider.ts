@@ -2,6 +2,10 @@ import { Autoplay } from './Plugins/Autoplay';
 import { LoopSequencer } from './Sequencer/LoopSequencer';
 import { SliderPlugin } from './SliderPlugin';
 
+interface SliderChangeEventData {
+	newIndex: number;
+	previousIndex: number;
+}
 export class Slider {
 	public static defaultOptions: SliderOptionSet = {
 		classPrefix: 'slider-',
@@ -23,7 +27,7 @@ export class Slider {
 	private readonly $children: JQuery<HTMLElement>;
 	private $tracks?: JQuery<HTMLElement>;
 
-	private readonly options: SliderOptionSet;
+	private options: SliderOptionSet;
 
 	private currentLeft: number = 0;
 	private currentIndex: number = 0;
@@ -75,13 +79,20 @@ export class Slider {
 	}
 
 	public gotoSlide(index: number) {
+		this.getSlide(this.currentIndex).removeClass(this.options.classPrefix + 'current');
+
+		// TODO: Pass next index into event
+		$(this).trigger('slider.change.before', {
+			newIndex: index,
+			previousIndex: this.currentIndex,
+		});
+
 		this.currentIndex = index;
 		const left = this.getSlideLeft(index);
 		if (left === undefined) {
 			return;
 		}
 
-		$(this).trigger('slider.change.before');
 		$(this).animate(
 			{
 				currentLeft: left,
@@ -90,8 +101,29 @@ export class Slider {
 				step() {
 					this.$tracks!.css('transform', 'translateX(' + -this.currentLeft + 'px)');
 				},
+				always() {
+					this.getSlide().addClass(this.options.classPrefix + 'current');
+					$(this).trigger('slider.change.after', {
+						newIndex: index,
+						previousIndex: this.currentIndex,
+					});
+				},
 			},
 		);
+	}
+
+	public updateOptions(options: SliderOptions) {
+		this.options = $.extend({}, this.options, options);
+
+		this.foreachPlugin(plugin => plugin.optionsUpdated(this.options));
+	}
+
+	public getSlide(index?: number) {
+		if (index === undefined) {
+			index = this.currentIndex;
+		}
+
+		return $(this.$children.get(index));
 	}
 
 	public gotoNext() {
@@ -120,8 +152,17 @@ export class Slider {
 		}
 	}
 
-	public on(eventType: string, handler: JQuery.EventHandler<Slider>) {
+	public on(
+		eventType: 'slider.change.before' | 'slider.change.after',
+		handler: JQuery.EventHandler<Slider, SliderChangeEventData>,
+	): this;
+	public on(eventType: string, handler: JQuery.EventHandler<Slider, any>): this {
 		$(this).on(eventType, handler);
+		return this;
+	}
+
+	public off(eventType: string, handler: JQuery.EventHandler<Slider, any>) {
+		$(this).off(eventType, handler);
 	}
 
 	private foreachPlugin(callback: (plugin: SliderPlugin) => void): void {
