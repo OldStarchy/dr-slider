@@ -13,6 +13,11 @@
 			"type": "shell",
 			"command": "browser-sync . -w lib/*.* --startPath \"/example\"",
 			"problemMatcher": []
+		},
+		{
+			"type": "gulp",
+			"task": "typedoc",
+			"problemMatcher": []
 		}
 	]
 }
