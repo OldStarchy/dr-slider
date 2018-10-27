@@ -5,9 +5,9 @@ import { SliderPlugin } from './SliderPlugin';
 
 declare global {
 	interface JQuerySliderPlugin {
-		slider(this: JQuery<HTMLElement>, data: 'data'): Slider;
+		slider(this: JQuery<HTMLElement>, data: 'data'): Slider | undefined;
 		slider(this: JQuery<HTMLElement>, options?: SliderOptions): JQuery<HTMLElement>;
-		slider(this: JQuery<HTMLElement>, optionsOrData?: SliderOptions | 'data'): JQuery<HTMLElement> | Slider;
+		slider(this: JQuery<HTMLElement>, optionsOrData?: SliderOptions | 'data'): JQuery<HTMLElement> | Slider | undefined;
 	}
 
 	interface JQueryStaticSliderPlugin {

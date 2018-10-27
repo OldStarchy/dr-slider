@@ -118,6 +118,10 @@ export class Slider {
 		this.foreachPlugin(plugin => plugin.optionsUpdated(this.options));
 	}
 
+	public setOption<T extends keyof SliderOptionSet>(option: T, value: Required<SliderOptionSet>[T]) {
+		this.options[option] = value;
+	}
+
 	public getSlide(index?: number) {
 		if (index === undefined) {
 			index = this.currentIndex;
