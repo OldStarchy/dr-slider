@@ -11,7 +11,7 @@ export class Autoplay extends SliderPlugin<AutoplayOptionSet> {
 	private timeoutId: number | null = null;
 	private waitingForPromise: boolean = false;
 
-	public constructor(slider: Slider, options: AutoplayOptions) {
+	public constructor(slider: Slider, options: SliderCoreOptionSet & AutoplayOptions) {
 		super(slider, $.extend({}, Autoplay.defaultOptions, options));
 	}
 
