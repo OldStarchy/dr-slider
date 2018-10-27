@@ -1,13 +1,14 @@
 import { LoopSequencer } from './Sequencer/LoopSequencer';
 import { PingPongSequencer } from './Sequencer/PingPongSequencer';
 import { Slider } from './Slider';
+import { SliderPluginConstructor } from './SliderOptionSet';
 import { SliderPlugin } from './SliderPlugin';
 
 declare global {
 	interface JQuerySliderPlugin {
 		slider(this: JQuery<HTMLElement>, data: 'data'): Slider | undefined;
 		slider(this: JQuery<HTMLElement>, options?: SliderOptions): JQuery<HTMLElement>;
-		slider(this: JQuery<HTMLElement>, optionsOrData?: SliderOptions | 'data'): JQuery<HTMLElement> | Slider | undefined;
+		// slider(this: JQuery<HTMLElement>, optionsOrData?: SliderOptions | 'data'): JQuery<HTMLElement> | Slider | undefined;
 	}
 
 	interface JQueryStaticSliderPlugin {
@@ -16,6 +17,11 @@ declare global {
 		 * @param defaults
 		 */
 		slider(defaults: SliderOptions): void;
+		/**
+		 * Adds a plugin to be used in any new sliders
+		 */
+		slider<T extends {}>(plugin: SliderPluginConstructor): void;
+		// slider<T extends {}>(pluginOrDefaults: SliderOptions | SliderPlugin<T>): void;
 	}
 
 	/* tslint:disable:no-empty-interface */
@@ -50,8 +56,12 @@ const jqueryPlugin: JQuerySliderPlugin = {
 };
 
 const jqueryStaticPlugin: JQueryStaticSliderPlugin = {
-	slider(defaults: SliderOptions) {
-		$.extend(Slider.defaultOptions, defaults);
+	slider(pluginOrDefaults: SliderOptions | SliderPluginConstructor) {
+		if (typeof pluginOrDefaults === 'function') {
+			Slider.defaultPlugins.push(pluginOrDefaults);
+		} else {
+			$.extend(Slider.defaultOptions, pluginOrDefaults);
+		}
 	},
 };
 
