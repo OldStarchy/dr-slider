@@ -223,7 +223,7 @@ export class Slider {
 			for (let i = 0; i < this.options.responsive.length; i++) {
 				const responsive = this.options.responsive[i];
 
-				if (responsive.maxWidth > width) {
+				if (width <= responsive.maxWidth) {
 					if (this.effectiveOptionsIndex !== i) {
 						this.effectiveOptions = $.extend({}, Slider.defaultOptions, this.options, responsive.options);
 						this.effectiveOptionsChanged();
