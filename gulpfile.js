@@ -139,8 +139,8 @@ gulp.task('typedoc', function() {
 			// TypeDoc options (see typedoc docs)
 			entryPoint: inFile,
 			name: packageName,
-			ignoreCompilerErrors: false,
 			version: true,
+			excludePrivate: true,
 		}),
 	);
 });
