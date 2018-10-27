@@ -1,4 +1,3 @@
-import { Autoplay } from './Plugins/Autoplay';
 import { LoopSequencer } from './Sequencer/LoopSequencer';
 import { SliderPluginConstructor } from './SliderOptionSet';
 import { SliderPlugin } from './SliderPlugin';
@@ -19,7 +18,7 @@ export class Slider {
 		},
 	};
 
-	public static defaultPlugins: SliderPluginConstructor[] = [Autoplay];
+	public static defaultPlugins: SliderPluginConstructor[] = [];
 
 	private static instanceUID = 0;
 

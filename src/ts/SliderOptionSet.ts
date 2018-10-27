@@ -28,8 +28,6 @@ declare global {
 // asNavFor: null;
 // prevArrow: string;
 // nextArrow: string;
-// autoplay: boolean;
-// autoplaySpeed: number;
 // centerMode: boolean;
 // centerPadding: string;
 // cssEase: string;

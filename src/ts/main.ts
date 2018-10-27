@@ -74,3 +74,5 @@ window.DrSlider = {
 	Slider,
 	SliderPlugin,
 };
+
+import './Plugins/Autoplay';

@@ -115,3 +115,5 @@ declare global {
 	// tslint:disable-next-line
 	interface SliderOptionSet extends AutoplayOptionSet {}
 }
+
+$.slider(Autoplay);
