@@ -1,18 +1,24 @@
 export abstract class Sequencer {
-	public abstract getNext(current: number, length: number): number;
-	public abstract getPrev(current: number, length: number): number;
+	public index: number = 0;
 
-	public getOffset(current: number, offset: number, length: number): number {
-		if (offset > 0) {
-			while (offset-- > 0) {
-				current = this.getNext(current, length);
-			}
-		} else {
-			while (offset++ < 0) {
-				current = this.getPrev(current, length);
-			}
+	public Sequencer(startIndex?: number) {
+		if (startIndex !== undefined) {
+			this.index = startIndex;
 		}
+	}
 
-		return current;
+	public abstract peekNext(length: number): number;
+	public moveNext(length: number): number {
+		return (this.index = this.peekNext(length));
+	}
+
+	public abstract peekPrev(length: number): number;
+	public movePrev(length: number): number {
+		return (this.index = this.peekPrev(length));
+	}
+
+	public abstract peekOffset(offset: number, length: number): number;
+	public moveOffset(offset: number, length: number): number {
+		return (this.index = this.peekOffset(offset, length));
 	}
 }

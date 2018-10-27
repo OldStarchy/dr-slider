@@ -29,8 +29,8 @@ export class Slider {
 
 	private options: SliderCoreOptionSet & SliderOptions;
 
+	private lastIndex: number = 0;
 	private currentLeft: number = 0;
-	private currentIndex: number = 0;
 
 	private plugins: Array<SliderPlugin<any>> = [];
 
@@ -38,7 +38,17 @@ export class Slider {
 		// TODO: Do we need this instance ID?
 		this.instanceUID = Slider.instanceUID++;
 
+		if (!options) {
+			options = {};
+		}
+
+		if (options.sequencer === undefined) {
+			options.sequencer = new LoopSequencer();
+		}
+
 		this.options = $.extend({}, Slider.defaultOptions, options);
+
+		this.lastIndex = this.options.sequencer.index;
 
 		this.$element = $(element);
 		this.$children = this.$element.find(this.options.slideSelector);
@@ -79,15 +89,17 @@ export class Slider {
 	}
 
 	public gotoSlide(index: number) {
-		this.getSlide(this.currentIndex).removeClass(this.options.classPrefix + 'current');
+		const currentIndex = this.lastIndex;
+		this.lastIndex = index;
+
+		this.getSlide(currentIndex).removeClass(this.options.classPrefix + 'current');
 
 		// TODO: Pass next index into event
 		$(this).trigger('slider.change.before', {
 			newIndex: index,
-			previousIndex: this.currentIndex,
+			previousIndex: currentIndex,
 		});
 
-		this.currentIndex = index;
 		const left = this.getSlideLeft(index);
 		if (left === undefined) {
 			return;
@@ -105,14 +117,14 @@ export class Slider {
 					this.getSlide().addClass(this.options.classPrefix + 'current');
 					$(this).trigger('slider.change.after', {
 						newIndex: index,
-						previousIndex: this.currentIndex,
+						previousIndex: currentIndex,
 					});
 				},
 			},
 		);
 	}
 
-	public updateOptions(options: SliderOptions) {
+	public setOptions(options: SliderOptions) {
 		this.options = $.extend({}, this.options, options);
 
 		this.foreachPlugin(plugin => plugin.optionsUpdated(this.options));
@@ -120,34 +132,36 @@ export class Slider {
 
 	public setOption<T extends keyof SliderOptionSet>(option: T, value: SliderOptionSet[T]) {
 		this.options[option] = value;
+
+		this.foreachPlugin(plugin => plugin.optionsUpdated(this.options));
 	}
 
 	public getSlide(index?: number) {
 		if (index === undefined) {
-			index = this.currentIndex;
+			index = this.options.sequencer.index;
 		}
 
 		return $(this.$children.get(index));
 	}
 
 	public gotoNext() {
-		this.gotoSlide(this.options.sequencer.getNext(this.currentIndex, this.$children.length));
+		this.gotoSlide(this.options.sequencer.moveNext(this.$children.length));
 	}
 
 	public gotoPrev() {
-		this.gotoSlide(this.options.sequencer.getPrev(this.currentIndex, this.$children.length));
+		this.gotoSlide(this.options.sequencer.movePrev(this.$children.length));
 	}
 
 	public gotoOffset(offset: number) {
-		this.gotoSlide(this.options.sequencer.getOffset(this.currentIndex, offset, this.$children.length));
+		this.gotoSlide(this.options.sequencer.moveOffset(offset, this.$children.length));
 	}
 
 	public getSlideIndex(offset?: number) {
 		if (offset === undefined) {
-			return this.currentIndex;
+			return this.options.sequencer.index;
 		}
 
-		return this.options.sequencer.getOffset(this.currentIndex, offset, this.$children.length);
+		return this.options.sequencer.peekOffset(offset, this.$children.length);
 	}
 
 	public test() {
