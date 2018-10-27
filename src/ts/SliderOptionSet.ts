@@ -41,12 +41,18 @@ declare global {
 		 * The default is any plugins that have currently been added to the default list with $.slider(pluginType);
 		 */
 		plugins: SliderPluginConstructor[];
+
+		responsive?: Array<{
+			maxWidth: number;
+			options: Pick<SliderOptions, Exclude<keyof SliderOptions, 'responsive'>>;
+		}>;
 	}
 
 	/**
 	 * The full set of options available for a slider. This interface is merged when other plugins are included in the project.
 	 */
 	interface SliderOptionSet extends SliderCoreOptionSet {}
+
 	type SliderOptions = Partial<SliderOptionSet>;
 }
 

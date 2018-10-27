@@ -23,11 +23,13 @@ export class Slider {
 	private static instanceUID = 0;
 
 	public readonly instanceUID: number;
+	private effectiveOptionsIndex = -2;
 	private readonly $element: JQuery<HTMLElement>;
 	private readonly $children: JQuery<HTMLElement>;
 	private $tracks?: JQuery<HTMLElement>;
 
 	private options: SliderCoreOptionSet & SliderOptions;
+	private effectiveOptions!: Pick<SliderCoreOptionSet & SliderOptions, Exclude<keyof SliderOptions, 'responsive'>>;
 
 	private lastIndex: number = 0;
 	private currentLeft: number = 0;
@@ -48,17 +50,19 @@ export class Slider {
 
 		this.options = $.extend({}, Slider.defaultOptions, options);
 
+		this.updateEffectiveOptions();
+
 		this.lastIndex = this.options.sequencer.index;
 
 		this.$element = $(element);
 		this.$children = this.$element.find(this.options.slideSelector);
 
 		for (const pluginConstructor of Slider.defaultPlugins) {
-			this.plugins.push(new pluginConstructor(this, this.options));
+			this.plugins.push(new pluginConstructor(this, this.effectiveOptions));
 		}
 
 		for (const pluginConstructor of this.options.plugins) {
-			this.plugins.push(new pluginConstructor(this, this.options));
+			this.plugins.push(new pluginConstructor(this, this.effectiveOptions));
 		}
 
 		this.init();
@@ -127,13 +131,13 @@ export class Slider {
 	public setOptions(options: SliderOptions) {
 		this.options = $.extend({}, this.options, options);
 
-		this.foreachPlugin(plugin => plugin.optionsUpdated(this.options));
+		this.effectiveOptionsChanged();
 	}
 
 	public setOption<T extends keyof SliderOptionSet>(option: T, value: SliderOptionSet[T]) {
 		this.options[option] = value;
 
-		this.foreachPlugin(plugin => plugin.optionsUpdated(this.options));
+		this.effectiveOptionsChanged();
 	}
 
 	public getSlide(index?: number) {
@@ -183,6 +187,10 @@ export class Slider {
 		$(this).off(eventType, handler);
 	}
 
+	private effectiveOptionsChanged() {
+		this.foreachPlugin(plugin => plugin.optionsUpdated(this.effectiveOptions));
+	}
+
 	private foreachPlugin(callback: (plugin: SliderPlugin<any>) => void): void {
 		for (const plugin of this.plugins) {
 			try {
@@ -200,6 +208,36 @@ export class Slider {
 		this.$element.append(inner);
 		this.attachClasses(true);
 		this.$tracks = inner;
+		$(window).on('resize', () => {
+			this.updateEffectiveOptions();
+		});
+	}
+
+	private updateEffectiveOptions() {
+		const width = $(window).width();
+		if (width === undefined) {
+			return;
+		}
+
+		if (this.options.responsive) {
+			for (let i = 0; i < this.options.responsive.length; i++) {
+				const responsive = this.options.responsive[i];
+
+				if (responsive.maxWidth > width) {
+					if (this.effectiveOptionsIndex !== i) {
+						this.effectiveOptions = $.extend({}, Slider.defaultOptions, this.options, responsive.options);
+						this.effectiveOptionsChanged();
+						this.effectiveOptionsIndex = i;
+					}
+					return;
+				}
+			}
+		}
+		if (this.effectiveOptionsIndex !== -1) {
+			this.effectiveOptions = $.extend({}, Slider.defaultOptions, this.options);
+			this.effectiveOptionsChanged();
+			this.effectiveOptionsIndex = -1;
+		}
 	}
 
 	private attachClasses(attach: boolean) {
