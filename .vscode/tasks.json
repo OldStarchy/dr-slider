@@ -7,6 +7,12 @@
 			"type": "gulp",
 			"task": "watch",
 			"problemMatcher": []
+		},
+		{
+			"label": "Browser Sync",
+			"type": "shell",
+			"command": "browser-sync . -w lib/*.* --startPath \"/example\"",
+			"problemMatcher": []
 		}
 	]
 }
