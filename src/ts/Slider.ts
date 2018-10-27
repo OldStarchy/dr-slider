@@ -1,5 +1,6 @@
 import { Autoplay } from './Plugins/Autoplay';
 import { LoopSequencer } from './Sequencer/LoopSequencer';
+import { SliderPluginConstructor } from './SliderOptionSet';
 import { SliderPlugin } from './SliderPlugin';
 
 interface SliderChangeEventData {
@@ -7,7 +8,7 @@ interface SliderChangeEventData {
 	previousIndex: number;
 }
 export class Slider {
-	public static defaultOptions: SliderOptionSet = {
+	public static defaultOptions: SliderCoreOptionSet = {
 		classPrefix: 'slider-',
 		direction: 'horizontal',
 		plugins: [],
@@ -18,7 +19,7 @@ export class Slider {
 		},
 	};
 
-	public static defaultPlugins: Array<new (slider: Slider, options: SliderOptionSet) => SliderPlugin> = [Autoplay];
+	public static defaultPlugins: SliderPluginConstructor[] = [Autoplay];
 
 	private static instanceUID = 0;
 
@@ -27,12 +28,12 @@ export class Slider {
 	private readonly $children: JQuery<HTMLElement>;
 	private $tracks?: JQuery<HTMLElement>;
 
-	private options: SliderOptionSet;
+	private options: SliderCoreOptionSet & SliderOptions;
 
 	private currentLeft: number = 0;
 	private currentIndex: number = 0;
 
-	private plugins: SliderPlugin[] = [];
+	private plugins: Array<SliderPlugin<any>> = [];
 
 	public constructor(element: HTMLElement, options?: SliderOptions) {
 		// TODO: Do we need this instance ID?
@@ -64,7 +65,7 @@ export class Slider {
 		return this.$element;
 	}
 
-	public removePlugin(plugin: SliderPlugin) {
+	public removePlugin(plugin: SliderPlugin<any>) {
 		// TODO: this
 	}
 	public getSlideLeft(index: number) {
@@ -169,7 +170,7 @@ export class Slider {
 		$(this).off(eventType, handler);
 	}
 
-	private foreachPlugin(callback: (plugin: SliderPlugin) => void): void {
+	private foreachPlugin(callback: (plugin: SliderPlugin<any>) => void): void {
 		for (const plugin of this.plugins) {
 			try {
 				callback(plugin);

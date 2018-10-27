@@ -2,16 +2,19 @@ import { Sequencer } from './Sequencer';
 import { Slider } from './Slider';
 import { SliderPlugin } from './SliderPlugin';
 
+export type SliderPluginConstructor = new (slider: Slider, options: any) => SliderPlugin<any>;
+
 declare global {
-	interface SliderOptionSet {
+	interface SliderCoreOptionSet {
 		slideSelector: string;
 		classPrefix: string;
 		direction: 'horizontal' | 'vertical';
 		transition: (this: Slider, from: number, to: number, step: number) => void;
 		sequencer: Sequencer;
-		plugins: Array<new (slider: Slider, options: SliderOptionSet) => SliderPlugin>;
+		plugins: SliderPluginConstructor[];
 	}
 
+	interface SliderOptionSet extends SliderCoreOptionSet {}
 	type SliderOptions = Partial<SliderOptionSet>;
 }
 

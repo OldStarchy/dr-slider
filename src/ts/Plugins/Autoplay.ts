@@ -1,8 +1,8 @@
 import { Slider } from '../Slider';
 import { SliderPlugin } from '../SliderPlugin';
 
-export class Autoplay extends SliderPlugin {
-	private static defaultOptions: AutoplayOptions = {
+export class Autoplay extends SliderPlugin<AutoplayOptionSet> {
+	private static defaultOptions: AutoplayOptionSet = {
 		autoplay: false,
 		autoplayDwell: 3000,
 		pauseOnHover: true,
@@ -11,7 +11,7 @@ export class Autoplay extends SliderPlugin {
 	private timeoutId: number | null = null;
 	private waitingForPromise: boolean = false;
 
-	public constructor(slider: Slider, options: SliderOptionSet) {
+	public constructor(slider: Slider, options: AutoplayOptions) {
 		super(slider, $.extend({}, Autoplay.defaultOptions, options));
 	}
 
@@ -23,9 +23,9 @@ export class Autoplay extends SliderPlugin {
 		this.maybeStartTimeout();
 	}
 
-	public optionsUpdated(options: SliderOptionSet) {
+	public optionsUpdated(options: AutoplayOptions) {
 		const oldOptions = this.options;
-		super.optionsUpdated(options);
+		super.optionsUpdated($.extend({}, Autoplay.defaultOptions, this.options, options));
 
 		if (!oldOptions.autoplay) {
 			this.maybeStartTimeout();
@@ -95,7 +95,7 @@ export class Autoplay extends SliderPlugin {
 }
 
 declare global {
-	interface AutoplayOptions {
+	interface AutoplayOptionSet {
 		/**
 		 * Enable autoplay
 		 */
@@ -110,6 +110,8 @@ declare global {
 		pauseOnHover: boolean;
 	}
 
+	type AutoplayOptions = Partial<AutoplayOptionSet>;
+
 	// tslint:disable-next-line
-	interface SliderOptionSet extends Partial<AutoplayOptions> {}
+	interface SliderOptionSet extends AutoplayOptionSet {}
 }

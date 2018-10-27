@@ -16,7 +16,8 @@
 			"severity": "error"
 		},
 		"no-console": false,
-		"no-namespace": false
+		"no-namespace": false,
+		"no-empty-interface": false
 	},
 	"rulesDirectory": []
 }
