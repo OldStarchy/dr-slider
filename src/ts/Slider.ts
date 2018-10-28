@@ -72,6 +72,8 @@ export class Slider {
 				plugin.init();
 			}
 		});
+
+		this.jumpToSlide(this.getSlideIndex());
 	}
 
 	public getElement() {
@@ -126,6 +128,32 @@ export class Slider {
 				},
 			},
 		);
+	}
+
+	public jumpToSlide(index: number) {
+		const currentIndex = this.lastIndex;
+		this.lastIndex = this.options.sequencer.index = index;
+
+		this.getSlide(currentIndex).removeClass(this.options.classPrefix + 'current');
+
+		// TODO: Pass next index into event
+		$(this).trigger('slider.change.before', {
+			newIndex: index,
+			previousIndex: currentIndex,
+		});
+
+		const left = this.getSlideLeft(index);
+		if (left === undefined) {
+			return;
+		}
+
+		this.currentLeft = left;
+		this.$tracks!.css('transform', 'translateX(' + -this.currentLeft + 'px)');
+		this.getSlide().addClass(this.options.classPrefix + 'current');
+		$(this).trigger('slider.change.after', {
+			newIndex: index,
+			previousIndex: currentIndex,
+		});
 	}
 
 	public setOptions(options: SliderOptions) {
