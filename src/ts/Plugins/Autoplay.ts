@@ -1,4 +1,5 @@
 import { Slider } from '../Slider';
+import { SliderCoreOptionSet } from '../SliderOptionSet';
 import { SliderPlugin } from '../SliderPlugin';
 
 export class Autoplay extends SliderPlugin<AutoplayOptionSet> {
@@ -112,7 +113,6 @@ declare global {
 
 	type AutoplayOptions = Partial<AutoplayOptionSet>;
 
-	// tslint:disable-next-line
 	interface SliderOptionSet extends AutoplayOptionSet {}
 }
 

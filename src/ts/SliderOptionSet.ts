@@ -4,50 +4,51 @@ import { SliderPlugin } from './SliderPlugin';
 
 export type SliderPluginConstructor = new (slider: Slider, options: any) => SliderPlugin<any>;
 
-declare global {
+/**
+ * The core set of options for a slider.
+ */
+export interface SliderCoreOptionSet {
 	/**
-	 * The core set of options for a slider.
+	 * The selector used to find slides within a slider. Defaults to '> *'
 	 */
-	interface SliderCoreOptionSet {
-		/**
-		 * The selector used to find slides within a slider. Defaults to '> *'
-		 */
-		slideSelector: string;
-		/**
-		 * A prefix for all dynamic classes added to elements. Defaults to 'slider-'
-		 */
-		classPrefix: string;
-		/**
-		 * The direction of the slider, either 'horizontal' or 'vertical'. Defaults to 'horizontal'
-		 */
-		direction: 'horizontal' | 'vertical';
-		/**
-		 * A function to transition between two slides. It is called with the arguments (from: number, to: number, step:number)
-		 * from is the index of the initial slide.
-		 * to is the index of the new slide.
-		 * step is a number between 0 and 1 indicating how far through the transition the animation should be.
-		 *
-		 * This property is currently not implemented
-		 * TODO: this
-		 */
-		transition: (this: Slider, from: number, to: number, step: number) => void;
-		/**
-		 * An Sequencer is an object that has methods that return what should be the next (or previous) slide index.
-		 * The default is a LoopSequencer which counts up then starts from 0 once the last slide is reached.
-		 */
-		sequencer: Sequencer;
-		/**
-		 * An array of plugins to use for this slider.
-		 * The default is any plugins that have currently been added to the default list with $.slider(pluginType);
-		 */
-		plugins: SliderPluginConstructor[];
+	slideSelector: string;
+	/**
+	 * A prefix for all dynamic classes added to elements. Defaults to 'slider-'
+	 */
+	classPrefix: string;
+	/**
+	 * The direction of the slider, either 'horizontal' or 'vertical'. Defaults to 'horizontal'
+	 */
+	direction: 'horizontal' | 'vertical';
+	/**
+	 * A function to transition between two slides. It is called with the arguments (from: number, to: number, step:number)
+	 * from is the index of the initial slide.
+	 * to is the index of the new slide.
+	 * step is a number between 0 and 1 indicating how far through the transition the animation should be.
+	 *
+	 * This property is currently not implemented
+	 * TODO: this
+	 */
+	transition: (this: Slider, from: number, to: number, step: number) => void;
+	/**
+	 * An Sequencer is an object that has methods that return what should be the next (or previous) slide index.
+	 * The default is a LoopSequencer which counts up then starts from 0 once the last slide is reached.
+	 */
+	sequencer: Sequencer;
+	/**
+	 * An array of plugins to use for this slider.
+	 * The default is any plugins that have currently been added to the default list with $.slider(pluginType);
+	 */
+	plugins: SliderPluginConstructor[];
 
-		responsive?: Array<{
-			maxWidth: number;
-			options: Pick<SliderOptions, Exclude<keyof SliderOptions, 'responsive'>>;
-		}>;
-	}
+	responsive?: Array<{
+		maxWidth: number;
+		options: SliderOptionsNoResponsive;
+	}>;
+}
 
+export type SliderOptionsNoResponsive = Pick<SliderOptions, Exclude<keyof SliderOptions, 'responsive'>>;
+declare global {
 	/**
 	 * The full set of options available for a slider. This interface is merged when other plugins are included in the project.
 	 */

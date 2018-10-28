@@ -1,5 +1,5 @@
 import { LoopSequencer } from './Sequencer/LoopSequencer';
-import { SliderPluginConstructor } from './SliderOptionSet';
+import { SliderCoreOptionSet, SliderOptionsNoResponsive, SliderPluginConstructor } from './SliderOptionSet';
 import { SliderPlugin } from './SliderPlugin';
 
 interface SliderChangeEventData {
@@ -29,7 +29,7 @@ export class Slider {
 	private $tracks?: JQuery<HTMLElement>;
 
 	private options: SliderCoreOptionSet & SliderOptions;
-	private effectiveOptions!: Pick<SliderCoreOptionSet & SliderOptions, Exclude<keyof SliderOptions, 'responsive'>>;
+	private effectiveOptions!: SliderOptionsNoResponsive;
 
 	private lastIndex: number = 0;
 	private currentLeft: number = 0;
@@ -94,7 +94,7 @@ export class Slider {
 
 	public gotoSlide(index: number) {
 		const currentIndex = this.lastIndex;
-		this.lastIndex = index;
+		this.lastIndex = this.options.sequencer.index = index;
 
 		this.getSlide(currentIndex).removeClass(this.options.classPrefix + 'current');
 
@@ -131,13 +131,13 @@ export class Slider {
 	public setOptions(options: SliderOptions) {
 		this.options = $.extend({}, this.options, options);
 
-		this.effectiveOptionsChanged();
+		this.updateEffectiveOptions();
 	}
 
 	public setOption<T extends keyof SliderOptionSet>(option: T, value: SliderOptionSet[T]) {
 		this.options[option] = value;
 
-		this.effectiveOptionsChanged();
+		this.updateEffectiveOptions();
 	}
 
 	public getSlide(index?: number) {
@@ -187,7 +187,8 @@ export class Slider {
 		$(this).off(eventType, handler);
 	}
 
-	private effectiveOptionsChanged() {
+	private setEffectiveOptions(options: SliderOptionsNoResponsive) {
+		this.effectiveOptions = options;
 		this.foreachPlugin(plugin => plugin.optionsUpdated(this.effectiveOptions));
 	}
 
@@ -225,8 +226,7 @@ export class Slider {
 
 				if (width <= responsive.maxWidth) {
 					if (this.effectiveOptionsIndex !== i) {
-						this.effectiveOptions = $.extend({}, Slider.defaultOptions, this.options, responsive.options);
-						this.effectiveOptionsChanged();
+						this.setEffectiveOptions($.extend({}, Slider.defaultOptions, this.options, responsive.options));
 						this.effectiveOptionsIndex = i;
 					}
 					return;
@@ -234,8 +234,7 @@ export class Slider {
 			}
 		}
 		if (this.effectiveOptionsIndex !== -1) {
-			this.effectiveOptions = $.extend({}, Slider.defaultOptions, this.options);
-			this.effectiveOptionsChanged();
+			this.setEffectiveOptions($.extend({}, Slider.defaultOptions, this.options));
 			this.effectiveOptionsIndex = -1;
 		}
 	}
