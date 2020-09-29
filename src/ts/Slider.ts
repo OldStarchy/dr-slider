@@ -1,4 +1,3 @@
-import { LoopSequencer } from './Sequencer/LoopSequencer';
 import { SliderCoreOptionSet, SliderOptionsNoResponsive, SliderPluginConstructor } from './SliderOptionSet';
 import { SliderPlugin } from './SliderPlugin';
 
@@ -11,8 +10,8 @@ export class Slider {
 		classPrefix: 'slider-',
 		direction: 'horizontal',
 		plugins: [],
-		sequencer: new LoopSequencer(),
 		slideSelector: '> *',
+		startIndex: 0,
 		transition(this: Slider, from: number, to: number, step: number) {
 			this.$children.first().css('margin-left', step);
 		},
@@ -32,6 +31,7 @@ export class Slider {
 	private effectiveOptions!: SliderOptionsNoResponsive;
 
 	private lastIndex: number = 0;
+	private index: number = 0;
 	private currentLeft: number = 0;
 
 	private plugins: Array<SliderPlugin<any>> = [];
@@ -44,15 +44,12 @@ export class Slider {
 			options = {};
 		}
 
-		if (options.sequencer === undefined) {
-			options.sequencer = new LoopSequencer();
-		}
-
 		this.options = $.extend({}, Slider.defaultOptions, options);
 
 		this.updateEffectiveOptions();
 
-		this.lastIndex = this.options.sequencer.index;
+		this.lastIndex = this.options.startIndex;
+		this.index = this.options.startIndex;
 
 		this.$element = $(element);
 		this.$children = this.$element.find(this.options.slideSelector);
@@ -73,7 +70,7 @@ export class Slider {
 			}
 		});
 
-		this.jumpToSlide(this.getSlideIndex());
+		this.jumpToSlide(this.index);
 	}
 
 	public getElement() {
@@ -95,15 +92,14 @@ export class Slider {
 	}
 
 	public gotoSlide(index: number) {
-		const currentIndex = this.lastIndex;
-		this.lastIndex = this.options.sequencer.index = index;
+		this.lastIndex = this.index;
 
-		this.getSlide(currentIndex).removeClass(this.options.classPrefix + 'current');
+		this.getSlide(index).removeClass(this.options.classPrefix + 'current');
 
 		// TODO: Pass next index into event
 		$(this).trigger('slider.change.before', {
 			newIndex: index,
-			previousIndex: currentIndex,
+			previousIndex: this.lastIndex,
 		});
 
 		const left = this.getSlideLeft(index);
@@ -120,10 +116,11 @@ export class Slider {
 					this.$tracks!.css('transform', 'translateX(' + -this.currentLeft + 'px)');
 				},
 				always() {
+					this.index = index;
 					this.getSlide().addClass(this.options.classPrefix + 'current');
 					$(this).trigger('slider.change.after', {
 						newIndex: index,
-						previousIndex: currentIndex,
+						previousIndex: this.lastIndex,
 					});
 				},
 			},
@@ -131,15 +128,14 @@ export class Slider {
 	}
 
 	public jumpToSlide(index: number) {
-		const currentIndex = this.lastIndex;
-		this.lastIndex = this.options.sequencer.index = index;
+		this.lastIndex = this.index;
 
-		this.getSlide(currentIndex).removeClass(this.options.classPrefix + 'current');
+		this.getSlide(index).removeClass(this.options.classPrefix + 'current');
 
 		// TODO: Pass next index into event
 		$(this).trigger('slider.change.before', {
 			newIndex: index,
-			previousIndex: currentIndex,
+			previousIndex: this.lastIndex,
 		});
 
 		const left = this.getSlideLeft(index);
@@ -150,9 +146,10 @@ export class Slider {
 		this.currentLeft = left;
 		this.$tracks!.css('transform', 'translateX(' + -this.currentLeft + 'px)');
 		this.getSlide().addClass(this.options.classPrefix + 'current');
+		this.index = index;
 		$(this).trigger('slider.change.after', {
 			newIndex: index,
-			previousIndex: currentIndex,
+			previousIndex: this.lastIndex,
 		});
 	}
 
@@ -170,30 +167,41 @@ export class Slider {
 
 	public getSlide(index?: number) {
 		if (index === undefined) {
-			index = this.options.sequencer.index;
+			index = this.index;
 		}
 
 		return $(this.$children.get(index));
 	}
 
 	public gotoNext() {
-		this.gotoSlide(this.options.sequencer.moveNext(this.$children.length));
+		this.gotoSlide(this.getNextIndex());
 	}
 
 	public gotoPrev() {
-		this.gotoSlide(this.options.sequencer.movePrev(this.$children.length));
+		this.gotoSlide(this.getPrevIndex());
 	}
 
 	public gotoOffset(offset: number) {
-		this.gotoSlide(this.options.sequencer.moveOffset(offset, this.$children.length));
+		this.gotoSlide(this.getOffset(offset));
 	}
 
-	public getSlideIndex(offset?: number) {
+	public getOffset(offset?: number) {
 		if (offset === undefined) {
-			return this.options.sequencer.index;
+			offset = 0;
+		}
+		if (offset === 0) {
+			return this.index;
 		}
 
-		return this.options.sequencer.peekOffset(offset, this.$children.length);
+		return (((this.index + offset) % this.$children.length) + this.$children.length) % this.$children.length;
+	}
+
+	public getNextIndex() {
+		return (this.index + 1) % this.$children.length;
+	}
+
+	public getPrevIndex() {
+		return (this.index - 1 + this.$children.length) % this.$children.length;
 	}
 
 	public test() {

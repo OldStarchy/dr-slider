@@ -1,5 +1,3 @@
-import { LoopSequencer } from './Sequencer/LoopSequencer';
-import { PingPongSequencer } from './Sequencer/PingPongSequencer';
 import { Slider } from './Slider';
 import { SliderPluginConstructor } from './SliderOptionSet';
 import { SliderPlugin } from './SliderPlugin';
@@ -30,8 +28,6 @@ declare global {
 	/* tslint:enable:no-empty-interface */
 
 	interface DrSliderExports {
-		LoopSequencer: typeof LoopSequencer;
-		PingPongSequencer: typeof PingPongSequencer;
 		Slider: typeof Slider;
 		SliderPlugin: typeof SliderPlugin;
 	}
@@ -69,8 +65,6 @@ $.fn.extend(jqueryPlugin);
 $.extend($, jqueryStaticPlugin);
 
 window.DrSlider = {
-	LoopSequencer,
-	PingPongSequencer,
 	Slider,
 	SliderPlugin,
 };

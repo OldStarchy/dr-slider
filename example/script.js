@@ -2,9 +2,9 @@
 /// <reference path="../lib/slider.d.ts" />
 
 $(function() {
-	$('.slider-1').slider({
+	$('.slider').slider({
 		autoplay: true,
-		autoplayDwell: 100,
+		autoplayDwell: 8000,
 		responsive: [
 			{
 				maxWidth: 500,

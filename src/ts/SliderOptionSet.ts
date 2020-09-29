@@ -1,4 +1,3 @@
-import { Sequencer } from './Sequencer';
 import { Slider } from './Slider';
 import { SliderPlugin } from './SliderPlugin';
 
@@ -31,10 +30,9 @@ export interface SliderCoreOptionSet {
 	 */
 	transition: (this: Slider, from: number, to: number, step: number) => void;
 	/**
-	 * An Sequencer is an object that has methods that return what should be the next (or previous) slide index.
-	 * The default is a LoopSequencer which counts up then starts from 0 once the last slide is reached.
+	 * The first slide to show.
 	 */
-	sequencer: Sequencer;
+	startIndex: number;
 	/**
 	 * An array of plugins to use for this slider.
 	 * The default is any plugins that have currently been added to the default list with $.slider(pluginType);

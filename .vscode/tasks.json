@@ -18,6 +18,11 @@
 			"type": "gulp",
 			"task": "typedoc",
 			"problemMatcher": []
+		},
+		{
+			"type": "gulp",
+			"task": "build:scss",
+			"problemMatcher": []
 		}
 	]
 }

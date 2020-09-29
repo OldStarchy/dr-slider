@@ -61,12 +61,15 @@ export class Autoplay extends SliderPlugin<AutoplayOptionSet> {
 
 		switch (typeof option) {
 			case 'number':
-				dwellOrNull = option;
+				dwellOrNull = option as number;
 				break;
 
 			case 'function':
-				const index = this.slider.getSlideIndex();
-				const result = option(index, this.slider.getSlide(index));
+				const index = this.slider.getOffset();
+				const result = (option as (slideIndex: number, slide: JQuery<HTMLElement>) => number | PromiseLike<any> | null)(
+					index,
+					this.slider.getSlide(index),
+				);
 
 				if (typeof result === 'number') {
 					dwellOrNull = result;
